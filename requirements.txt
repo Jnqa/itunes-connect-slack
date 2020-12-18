@@ -1,0 +1,5 @@
+# To ensure app dependencies are ported from your virtual environment/host machine into your container, run 'pip freeze > requirements.txt' in the terminal to overwrite this file
+sudo gem install fastlane
+npm install @slack/client@3.16.0 --save
+npm install dirty --save
+npm install moment --save
