@@ -1,0 +1,44 @@
+name: Tag
+on: 
+  push:
+    tags:
+      - '*'
+jobs:
+  push_to_registry:
+    name: Pushka to GitHub registry by Tags
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the version
+        run: echo "VERSION=$(echo $GITHUB_REF | cut -d / -f 3)" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: build&push
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: jnqa/itunes-connect-slack/ics #!
+          tags: ${{ env.VERSION }}
+
+      # # Later
+      # - name: Checkout k8s
+      #   uses: actions/checkout@v2
+      #   with:
+      #     token: ${{ secrets.ORG_PERSONAL_ACCESS_TOKEN }}
+      #     repository: Zebrainy/k8s
+          
+      # - name: Update files
+      #   run: envsubst < ./config/mg/deployment.template.yml > ./config/mg/deployment.yml #!
+      #   env:
+      #     SERVICE_IMAGE_TAG: docker.pkg.github.com/zebrainy/minigame-configurator/api:${{ env.VERSION }} #!
+      
+      # - name: Create pull request
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     branch: ci/mg #!
+      #     token: ${{ secrets.ORG_PERSONAL_ACCESS_TOKEN }}
+      #     commit-message: Upgraded ${{ github.repository }} to ${{ env.VERSION }}
+      #     title: Upgraded ${{ github.repository }} to ${{ env.VERSION }}
